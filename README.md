@@ -8,7 +8,7 @@ icicle-chart
 A partition / icicle interactive chart web component for visualizing hierarchical data.
 
 <p align="center">
-     <a href="https://vasturiano.github.io/icicle-chart/example/flare"><img width="80%" src="https://vasturiano.github.io/icicle-chart/example/preview.png"></a>
+     <a href="https://vasturiano.github.io/icicle-chart/example/flare"><img width="90%" src="https://vasturiano.github.io/icicle-chart/example/preview.png"></a>
 </p>
 
 Also called a partition chart or a flame chart, an icicle chart visualizes a hierarchical data structure where nodes of a tree are represented by adjacent rectangles layed out progressively according to their depth. 
