@@ -5,17 +5,15 @@ icicle-chart
 [![Build Size][build-size-img]][build-size-url]
 [![Dependencies][dependencies-img]][dependencies-url]
 
-A partition / icicle interactive chart web component for visualizing hierarchical data.
-
 <p align="center">
-     <a href="https://vasturiano.github.io/icicle-chart/example/flare"><img width="90%" src="https://vasturiano.github.io/icicle-chart/example/preview.png"></a>
+   <a href="https://vasturiano.github.io/icicle-chart/example/flare"><img width="90%" src="https://vasturiano.github.io/icicle-chart/example/preview.png"></a>
 </p>
 
 Also called a partition chart or a flame chart, an icicle chart visualizes a hierarchical data structure where nodes of a tree are represented by adjacent rectangles layed out progressively according to their depth. 
 
 Four orientation modes are supported for the axial direction of the nodes level: top-down, bottom-up, left-to-right and right-to-left.
 
-Zooming is available in the nodes width cross-axis direction via mouse-wheel events or by clicking on a node, enabling a gradual exploration of the data.
+Zooming interaction is available in the nodes cross-axis direction via mouse-wheel events or by clicking on a node, enabling a gradual exploration of the data.
 Clicking on a node zooms the view so that the node occupies the full width available. Clicking in the chart's background resets the zoom to its initial position.
 The chart also responds to data changes by animating the dimensions of each of the nodes into their new positions. 
 
