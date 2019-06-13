@@ -136,7 +136,7 @@ export default Kapsule({
 
     state.svg
       .on('dblclick.zoom', null)  // Disable double-click zoom
-      .on('click', () => (state.onClick || this.zoomReset)()); // By default reset zoom when clicking on canvas
+      .on('click', () => (state.onClick || this.zoomReset)(null)); // By default reset zoom when clicking on canvas
 
     state.zoomTransform = { x: 0, y: 0, k: 1 };
 
