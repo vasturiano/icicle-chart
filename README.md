@@ -21,7 +21,7 @@ The chart also responds to data changes by animating the dimensions of each of t
 
 For improved performance, nodes with width smaller than a given threshold (`minSegmentWidth`) are excluded from the DOM, allowing for representation of large data sets while maintaining a smooth interaction. See [here for an example](https://vasturiano.github.io/icicle-chart/example/large-data) of a randomly generated large data structure.
 
-See also the [Sunburst](https://github.com/vasturiano/sunburst-chart) chart.
+See also the [Sunburst chart](https://github.com/vasturiano/sunburst-chart).
 
 ## Quick start
 
