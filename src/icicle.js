@@ -1,5 +1,4 @@
 import { select as d3Select, event as d3Event } from 'd3-selection';
-import { zoom as d3Zoom, zoomIdentity as d3ZoomIdentity } from 'd3-zoom';
 import { scaleLinear } from 'd3-scale';
 import { hierarchy as d3Hierarchy, partition as d3Partition } from 'd3-hierarchy';
 import { transition as d3Transition } from 'd3-transition';
@@ -8,11 +7,12 @@ import Kapsule from 'kapsule';
 import tinycolor from 'tinycolor2';
 import accessorFn from 'accessor-fn';
 
+import zoomable from './zoomable';
+
 const LABELS_OPACITY_SCALE = scaleLinear().domain([15, 40]).range([0, 1]);
 const TRANSITION_DURATION = 800;
 
 export default Kapsule({
-
   props: {
     width: {
       default: window.innerWidth,
@@ -42,37 +42,22 @@ export default Kapsule({
   },
   methods: {
     zoomBy: function(state, k) {
-      if(state.initialised) {
-        state.zoomWithTransition = true;
-        state.svg
-          .call(state.zoom.scaleBy, k);
-      }
+      state.zoom.scaleBy(k, TRANSITION_DURATION);
       return this;
     },
     zoomReset: function(state) {
-      if (state.initialised) {
-        state.zoomWithTransition = true;
-        state.svg
-          .call(state.zoom.transform, d3ZoomIdentity); // Reset zoom level
-      }
+      state.zoom.zoomReset(TRANSITION_DURATION);
       return this;
     },
     zoomToNode: function(state, d = {}) {
       const node = d.__dataNode;
-      if (state.initialised && node) {
-        state.zoomWithTransition = true;
-
+      if (node) {
         const horiz = state.orientation === 'lr' || state.orientation === 'rl';
 
         const scale = state[horiz ? 'height' : 'width'] / (node.x1 - node.x0);
-        const translate = [-node.x0, 0];
-        horiz && translate.reverse();
+        const tr = -node.x0;
 
-        state.svg
-          .call(state.zoom.transform, d3ZoomIdentity
-            .scale(scale)
-            .translate(...translate)
-        );
+        state.zoom.zoomTo({ x: horiz ? 0 : tr, y: horiz ? tr : 0, k: scale }, TRANSITION_DURATION);
       }
       return this;
     },
@@ -103,6 +88,9 @@ export default Kapsule({
       }
     }
   },
+  stateInit: () => {
+    zoom: zoomable()
+  },
   init: function(domNode, state) {
     const el = d3Select(domNode)
       .append('div').attr('class', 'icicle-viz');
@@ -128,28 +116,25 @@ export default Kapsule({
     });
 
     // zoom/pan
-    state.svg.call(state.zoom = d3Zoom()
-      .scaleExtent([1, Infinity])
-      .filter(() => !d3Event.button && !d3Event.dblclick)
-      .on('zoom', handleZoom)
-    );
+    state.zoom(state.svg)
+      .svgEl(state.canvas)
+      .onChange((tr, prevTr, duration) => {
+        // Prevent using transitions when using mouse wheel to zoom
+        state.skipTransitionsOnce = !duration;
+        state._rerender();
+
+        if (state.showLabels) {
+          // Scale labels inversely proportional
+          state.canvas.selectAll('text').transition(duration)
+            .attrTween('transform', function () {
+              const kTr = d3Interpolate(prevTr.k, tr.k);
+              return horiz ? t => `scale(1,${1 / kTr(t)})` : t => `scale(${1 / kTr(t)},1)`;
+            });
+        }
+      });
 
     state.svg
-      .on('dblclick.zoom', null)  // Disable double-click zoom
       .on('click', () => (state.onClick || this.zoomReset)(null)); // By default reset zoom when clicking on canvas
-
-    state.zoomTransform = { x: 0, y: 0, k: 1 };
-
-    //
-
-    function handleZoom() {
-      // Prevent using transitions when using mouse wheel to zoom
-      state.skipTransitionsOnce = !state.zoomWithTransition;
-      state.zoomWithTransition = false;
-
-      state.zoomTransform = d3Event.transform;
-      state._rerender();
-    }
   },
   update: function(state) {
     state.svg
@@ -163,13 +148,15 @@ export default Kapsule({
 
     const horiz = state.orientation === 'lr' || state.orientation === 'rl';
 
+    const zoomTr = state.zoom.current();
+
     const cell = state.canvas.selectAll('.node')
       .data(
         state.layoutData
           .filter(d => // Show only segments in scene that are wider than the threshold
-            d.x1 >= -state.zoomTransform[horiz ? 'y' : 'x'] / state.zoomTransform.k
-            && d.x0 <= (horiz ? state.height - state.zoomTransform.y : state.width - state.zoomTransform.x) / state.zoomTransform.k
-            && (d.x1 - d.x0) >= state.minSegmentWidth / state.zoomTransform.k
+            d.x1 >= -zoomTr[horiz ? 'y' : 'x'] / zoomTr.k
+            && d.x0 <= (horiz ? state.height - zoomTr.y : state.width - zoomTr.x) / zoomTr.k
+            && (d.x1 - d.x0) >= state.minSegmentWidth / zoomTr.k
         ),
         d => d.id
     );
@@ -217,7 +204,7 @@ export default Kapsule({
       .append('use')
       .attr('xlink:href', d => `#rect-${d.id}`);
 
-    const label = newCell.append('g')
+    newCell.append('g')
       .attr('clip-path', d => `url(#clip-${d.id})`)
       .append('g')
         .attr('class', 'label-container')
@@ -252,26 +239,8 @@ export default Kapsule({
         .classed('light', d => !tinycolor(colorOf(d.data, d.parent)).isLight())
         .transition(transition)
         .style('text-anchor', state.orientation === 'lr' ? 'start' : state.orientation === 'rl' ? 'end' : 'middle')
-        .style('opacity', d => LABELS_OPACITY_SCALE((horiz ? y1(d) - y0(d) : x1(d) - x0(d)) * state.zoomTransform.k))
+        .style('opacity', d => LABELS_OPACITY_SCALE((horiz ? y1(d) - y0(d) : x1(d) - x0(d)) * zoomTr.k))
         .text(d => nameOf(d.data));
-    }
-
-    // Apply zoom
-    state.canvas.transition(transition)
-      .attr('transform', `
-        translate(${(horiz ? [0, state.zoomTransform.y] : [state.zoomTransform.x, 0]).join(',')})
-        scale(${(horiz ? [1, state.zoomTransform.k] : [state.zoomTransform.k, 1]).join(',')})
-      `);
-
-    if (state.showLabels) {
-      // Scale labels inversely proportional
-      const [,,scx,scy] = (state.canvas.attr('transform') || 'translate(0,0) scale(1,1)').match(/[+-]?\d+(\.\d+)?/g);
-      const curK = (horiz ? +scy : +scx) || 1;
-      allCells.selectAll('text').transition(transition)
-        .attrTween('transform', function () {
-          const kTr = d3Interpolate(curK, state.zoomTransform.k);
-          return horiz ? t => `scale(1,${1 / kTr(t)})` : t => `scale(${1 / kTr(t)},1)`;
-        });
     }
 
     //

@@ -4,6 +4,7 @@ import Kapsule from 'kapsule';
 
 export default Kapsule({
   props: {
+    svgEl: { triggerUpdate: false },
     enableX: { default: true, triggerUpdate: false },
     enableY: { default: true, triggerUpdate: false },
     scaleExtent: { default: [1, Infinity], onChange(extent, state) { extent && state.zoom.scaleExtent(extent)}, triggerUpdate: false },
@@ -25,7 +26,7 @@ export default Kapsule({
       state.el.call(state.zoom.transform, d3ZoomIdentity);
       return this;
     },
-    zoomTo: function(state, { x, y, k }, duration = 0) {
+    zoomTo: function(state, { x = 0, y = 0, k = 1 }, duration = 0) {
       state.transitionDuration = duration;
       state.el.call(state.zoom.transform, d3ZoomIdentity
         .scale(k)
@@ -40,7 +41,7 @@ export default Kapsule({
     zoomTransform: { x: 0, y: 0, k: 1 }
   }),
 
-  init(el, state, { mode } = { mode: 'svg'}) {
+  init(el, state) {
     state.isSvg = mode === 'svg';
 
     const isD3Selection = !!el && typeof el === 'object' && !!el.node && typeof el.node === 'function';
@@ -60,11 +61,13 @@ export default Kapsule({
         const duration = state.transitionDuration || 0;
         state.transitionDuration = 0; // reset it
 
-        state.el.transition(duration)
-          .attr('transform', `
-            translate(${tr.x}, ${tr.y})
-            scale(${state.enableX ? tr.k : 1}, ${state.enableY ? tr.k : 1 })
-          `);
+        if (state.svgEl) {
+          state.svgEl.transition(duration)
+            .attr('transform', `
+              translate(${tr.x}, ${tr.y})
+              scale(${state.enableX ? tr.k : 1}, ${state.enableY ? tr.k : 1})
+            `);
+        }
 
         state.onChange && state.onChange(tr, prevTr, duration);
       })
