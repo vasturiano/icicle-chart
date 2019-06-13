@@ -239,18 +239,22 @@ export default Kapsule({
       .attr('height', d => `${y1(d) - y0(d) - (horiz ? 0 : 1)}`)
       .style('fill', d => colorOf(d.data, d.parent));
 
-    allCells.select('g.label-container').transition(transition)
-      .attr('transform', d => `translate(
-          ${state.orientation === 'lr' ? 4 : state.orientation === 'rl' ? x1(d) - x0(d) - 4 : (x1(d) - x0(d)) / 2},
-          ${(y1(d) - y0(d)) / 2}
-        )`);
-
-    allCells.select('text.path-label')
-      .classed('light', d => !tinycolor(colorOf(d.data, d.parent)).isLight())
+    allCells.select('g.label-container')
+      .style('display', state.showLabels ? null : 'none')
       .transition(transition)
+        .attr('transform', d => `translate(
+            ${state.orientation === 'lr' ? 4 : state.orientation === 'rl' ? x1(d) - x0(d) - 4 : (x1(d) - x0(d)) / 2},
+            ${(y1(d) - y0(d)) / 2}
+          )`);
+
+    if (state.showLabels) {
+      allCells.select('text.path-label')
+        .classed('light', d => !tinycolor(colorOf(d.data, d.parent)).isLight())
+        .transition(transition)
         .style('text-anchor', state.orientation === 'lr' ? 'start' : state.orientation === 'rl' ? 'end' : 'middle')
         .style('opacity', d => LABELS_OPACITY_SCALE((horiz ? y1(d) - y0(d) : x1(d) - x0(d)) * state.zoomTransform.k))
         .text(d => nameOf(d.data));
+    }
 
     // Apply zoom
     state.canvas.transition(transition)
@@ -259,14 +263,16 @@ export default Kapsule({
         scale(${(horiz ? [1, state.zoomTransform.k] : [state.zoomTransform.k, 1]).join(',')})
       `);
 
-    // Scale labels inversely proportional
-    const [,,scx,scy] = (state.canvas.attr('transform') || 'translate(0,0) scale(1,1)').match(/[+-]?\d+(\.\d+)?/g);
-    const curK = (horiz ? +scy : +scx) || 1;
-    allCells.selectAll('text').transition(transition)
-      .attrTween('transform', function() {
-        const kTr = d3Interpolate(curK, state.zoomTransform.k);
-        return horiz ? t => `scale(1,${1/kTr(t)})` : t => `scale(${1/kTr(t)},1)`;
-      });
+    if (state.showLabels) {
+      // Scale labels inversely proportional
+      const [,,scx,scy] = (state.canvas.attr('transform') || 'translate(0,0) scale(1,1)').match(/[+-]?\d+(\.\d+)?/g);
+      const curK = (horiz ? +scy : +scx) || 1;
+      allCells.selectAll('text').transition(transition)
+        .attrTween('transform', function () {
+          const kTr = d3Interpolate(curK, state.zoomTransform.k);
+          return horiz ? t => `scale(1,${1 / kTr(t)})` : t => `scale(${1 / kTr(t)},1)`;
+        });
+    }
 
     //
 
