@@ -1,3 +1,3 @@
-import './style.css';
+import './icicle.css';
 
-export { default } from './icicle-chart';
+export { default } from './icicle';

@@ -1,0 +1,44 @@
+.icicle-viz {
+  cursor: move;
+}
+
+.icicle-viz rect {
+  cursor: pointer;
+  transition: opacity .4s;
+}
+
+.icicle-viz rect:hover {
+  opacity: 0.85;
+  transition: opacity .05s;
+}
+
+.icicle-viz text {
+  font-family: sans-serif;
+  font-size: 12px;
+  dominant-baseline: middle;
+  pointer-events: none;
+  fill: #404041;
+}
+
+.icicle-viz text.light {
+  fill: #F7F7F7;
+}
+
+.icicle-tooltip {
+  display: none;
+  position: absolute;
+  max-width: 320px;
+  white-space: nowrap;
+  padding: 5px;
+  border-radius: 3px;
+  font: 12px sans-serif;
+  color: #eee;
+  background: rgba(0,0,0,0.65);
+  pointer-events: none;
+}
+
+.icicle-tooltip .tooltip-title {
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 5px;
+}
