@@ -88,9 +88,9 @@ export default Kapsule({
       }
     }
   },
-  stateInit: () => {
+  stateInit: () => ({
     zoom: zoomable()
-  },
+  }),
   init: function(domNode, state) {
     const el = d3Select(domNode)
       .append('div').attr('class', 'icicle-viz');
@@ -124,6 +124,8 @@ export default Kapsule({
         state._rerender();
 
         if (state.showLabels) {
+          const horiz = state.orientation === 'lr' || state.orientation === 'rl';
+
           // Scale labels inversely proportional
           state.canvas.selectAll('text').transition(duration)
             .attrTween('transform', function () {
@@ -141,12 +143,14 @@ export default Kapsule({
       .style('width', state.width + 'px')
       .style('height', state.height + 'px');
 
+    const horiz = state.orientation === 'lr' || state.orientation === 'rl';
+
     state.zoom
-      .translateExtent([[0, 0], [state.width, state.height]]);
+      .translateExtent([[0, 0], [state.width, state.height]])
+      .enableX(!horiz)
+      .enableY(horiz);
 
     if (!state.layoutData) return;
-
-    const horiz = state.orientation === 'lr' || state.orientation === 'rl';
 
     const zoomTr = state.zoom.current();
 
@@ -237,10 +241,10 @@ export default Kapsule({
     if (state.showLabels) {
       allCells.select('text.path-label')
         .classed('light', d => !tinycolor(colorOf(d.data, d.parent)).isLight())
-        .transition(transition)
         .style('text-anchor', state.orientation === 'lr' ? 'start' : state.orientation === 'rl' ? 'end' : 'middle')
-        .style('opacity', d => LABELS_OPACITY_SCALE((horiz ? y1(d) - y0(d) : x1(d) - x0(d)) * zoomTr.k))
-        .text(d => nameOf(d.data));
+        .text(d => nameOf(d.data))
+        .transition(transition)
+          .style('opacity', d => LABELS_OPACITY_SCALE((horiz ? y1(d) - y0(d) : x1(d) - x0(d)) * zoomTr.k));
     }
 
     //
