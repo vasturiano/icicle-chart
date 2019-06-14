@@ -3,11 +3,10 @@ import { scaleLinear } from 'd3-scale';
 import { hierarchy as d3Hierarchy, partition as d3Partition } from 'd3-hierarchy';
 import { transition as d3Transition } from 'd3-transition';
 import { interpolate as d3Interpolate } from 'd3-interpolate';
+import zoomable from 'd3-zoomable';
 import Kapsule from 'kapsule';
 import tinycolor from 'tinycolor2';
 import accessorFn from 'accessor-fn';
-
-import zoomable from './zoomable';
 
 const LABELS_OPACITY_SCALE = scaleLinear().domain([15, 40]).range([0, 1]);
 const TRANSITION_DURATION = 800;
@@ -42,7 +41,7 @@ export default Kapsule({
   },
   methods: {
     zoomBy: function(state, k) {
-      state.zoom.scaleBy(k, TRANSITION_DURATION);
+      state.zoom.zoomBy(k, TRANSITION_DURATION);
       return this;
     },
     zoomReset: function(state) {

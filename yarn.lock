@@ -1151,6 +1151,15 @@ d3-zoom@^1.7.3:
     d3-selection "1"
     d3-transition "1"
 
+d3-zoomable@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/d3-zoomable/-/d3-zoomable-1.0.0.tgz#8716a639c35e0209b2640ef10943ff3da2bd7f29"
+  integrity sha512-P0GPReKinRZFBGVjwN8N5Y0HwQVE9Si98d+2eu1Pl2zuYV8yLjkr02VSRS7QFNcxFzIzkV9jFD003PnFf7/bEQ==
+  dependencies:
+    d3-selection "^1.4.0"
+    d3-zoom "^1.7.3"
+    kapsule "^1.10.1"
+
 debounce@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/debounce/-/debounce-1.2.0.tgz#44a540abc0ea9943018dc0eaa95cce87f65cd131"
