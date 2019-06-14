@@ -119,20 +119,18 @@ export default Kapsule({
     state.zoom(state.svg)
       .svgEl(state.canvas)
       .onChange((tr, prevTr, duration) => {
+        if (state.showLabels && !duration) {
+          // Scale labels immediately if not animating
+          const horiz = state.orientation === 'lr' || state.orientation === 'rl';
+          const scale = 1 / tr.k;
+
+          state.canvas.selectAll('text')
+            .attr('transform', horiz ? `scale(1, ${scale})` : `scale(${scale},1)`);
+        }
+
         // Prevent using transitions when using mouse wheel to zoom
         state.skipTransitionsOnce = !duration;
         state._rerender();
-
-        if (state.showLabels) {
-          const horiz = state.orientation === 'lr' || state.orientation === 'rl';
-
-          // Scale labels inversely proportional
-          state.canvas.selectAll('text').transition(duration)
-            .attrTween('transform', function () {
-              const kTr = d3Interpolate(prevTr.k, tr.k);
-              return horiz ? t => `scale(1,${1 / kTr(t)})` : t => `scale(${1 / kTr(t)},1)`;
-            });
-        }
       });
 
     state.svg
@@ -167,8 +165,10 @@ export default Kapsule({
 
     const nameOf = accessorFn(state.label);
     const colorOf = accessorFn(state.color);
-    const transition = d3Transition().duration(state.skipTransitionsOnce ? 0 : TRANSITION_DURATION);
+
+    const animate = !state.skipTransitionsOnce;
     state.skipTransitionsOnce = false;
+    const transition = d3Transition().duration(animate ? TRANSITION_DURATION: 0);
 
     const x0 = { td: d => d.x0, bu: d => d.x0, lr: d => d.y0, rl: d => state.width - d.y1 }[state.orientation];
     const x1 = { td: d => d.x1, bu: d => d.x1, lr: d => d.y1, rl: d => state.width - d.y0 }[state.orientation];
@@ -234,17 +234,26 @@ export default Kapsule({
       .style('display', state.showLabels ? null : 'none')
       .transition(transition)
         .attr('transform', d => `translate(
-            ${state.orientation === 'lr' ? 4 : state.orientation === 'rl' ? x1(d) - x0(d) - 4 : (x1(d) - x0(d)) / 2},
-            ${(y1(d) - y0(d)) / 2}
-          )`);
+          ${state.orientation === 'lr' ? 4 : state.orientation === 'rl' ? x1(d) - x0(d) - 4 : (x1(d) - x0(d)) / 2},
+          ${(y1(d) - y0(d)) / 2}
+        )`);
 
     if (state.showLabels) {
+      // Update previous scale
+      const prevK = state.prevK || 1;
+      state.prevK = zoomTr.k;
+
       allCells.select('text.path-label')
         .classed('light', d => !tinycolor(colorOf(d.data, d.parent)).isLight())
         .style('text-anchor', state.orientation === 'lr' ? 'start' : state.orientation === 'rl' ? 'end' : 'middle')
         .text(d => nameOf(d.data))
         .transition(transition)
-          .style('opacity', d => LABELS_OPACITY_SCALE((horiz ? y1(d) - y0(d) : x1(d) - x0(d)) * zoomTr.k));
+          .style('opacity', d => LABELS_OPACITY_SCALE((horiz ? y1(d) - y0(d) : x1(d) - x0(d)) * zoomTr.k))
+          // Scale labels inversely proportional
+          .attrTween('transform', function () {
+            const kTr = d3Interpolate(prevK, zoomTr.k);
+            return horiz ? t => `scale(1, ${1 / kTr(t)})` : t => `scale(${1 / kTr(t)}, 1)`;
+          });
     }
 
     //

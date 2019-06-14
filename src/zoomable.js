@@ -5,7 +5,20 @@ import Kapsule from 'kapsule';
 
 export default Kapsule({
   props: {
-    svgEl: { triggerUpdate: false },
+    htmlEl: { onChange(el, state) {
+      state.htmlElD3 = !el
+        ? null
+        : typeof el === 'object' && !!el.node && typeof el.node === 'function'
+          ? el // already a D3 selection
+          : d3Select(el);
+    }, triggerUpdate: false },
+    svgEl: { onChange(el, state) {
+      state.svgElD3 = !el
+        ? null
+        : typeof el === 'object' && !!el.node && typeof el.node === 'function'
+        ? el // already a D3 selection
+        : d3Select(el);
+    }, triggerUpdate: false },
     enableX: { default: true, triggerUpdate: false },
     enableY: { default: true, triggerUpdate: false },
     scaleExtent: { default: [1, Infinity], onChange(extent, state) { extent && state.zoom.scaleExtent(extent)}, triggerUpdate: false },
@@ -67,25 +80,17 @@ export default Kapsule({
           const duration = state.transitionDuration || 0;
           state.transitionDuration = 0; // reset it
 
-          if (state.svgEl) {
-            const getTransform = ({ x, y, k}) => `translate(${x}, ${y}) scale(${state.enableX ? k : 1}, ${state.enableY ? k : 1})`;
+          const scX = state.enableX ? tr.k : 1;
+          const scY = state.enableY ? tr.k : 1;
 
-            !duration
-              ? state.svgEl.attr('transform', getTransform(tr))
-              : state.svgEl.transition(duration).attrTween('transform', () => {
-                const xTr = d3Interpolate(prevTr.x, tr.x);
-                const yTr = d3Interpolate(prevTr.y, tr.y);
-                const kTr = d3Interpolate(prevTr.k, tr.k);
-                return t => getTransform({ x: xTr(t), y: yTr(t), k: kTr(t) });
-              });
-            /*
-            (duration ? state.svgEl.transition(duration) : state.svgEl)
-              .attr('transform', `
-                translate(${tr.x}, ${tr.y})
-                scale(${state.enableX ? tr.k : 1}, ${state.enableY ? tr.k : 1})
-              `);
+          if (state.htmlElD3) {
+            (duration ? state.htmlElD3.transition().duration(duration) : state.htmlElD3)
+              .style('transform', `translate(${tr.x}px, ${tr.y}px) scale(${scX}, ${scY})`);
+          }
 
-             */
+          if (state.svgElD3) {
+            (duration ? state.svgElD3.transition().duration(duration) : state.svgElD3)
+              .attr('transform', `translate(${tr.x}, ${tr.y}) scale(${scX}, ${scY})`);
           }
 
           state.onChange && state.onChange(tr, prevTr, duration);
