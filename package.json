@@ -44,7 +44,7 @@
     "d3-scale": "^3.0.0",
     "d3-selection": "^1.4.0",
     "d3-transition": "^1.2.0",
-    "d3-zoomable": "^1.0.0",
+    "d3-zoomable": "^1.1.1",
     "kapsule": "^1.10.1",
     "tinycolor2": "^1.4.1"
   },
@@ -56,10 +56,10 @@
     "postcss-nested": "^4.1.2",
     "postcss-simple-vars": "^5.0.2",
     "rimraf": "^2.6.3",
-    "rollup": "^1.15.1",
+    "rollup": "^1.15.5",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^10.0.0",
-    "rollup-plugin-node-resolve": "^5.0.1",
+    "rollup-plugin-node-resolve": "^5.0.2",
     "rollup-plugin-postcss": "^2.0.3",
     "terser": "^4.0.0"
   }
