@@ -8,7 +8,8 @@ import Kapsule from 'kapsule';
 import tinycolor from 'tinycolor2';
 import accessorFn from 'accessor-fn';
 
-const LABELS_OPACITY_SCALE = scaleLinear().domain([15, 40]).range([0, 1]);
+const LABELS_WIDTH_OPACITY_SCALE = scaleLinear().domain([4, 8]).clamp(true); // px per char
+const LABELS_HEIGHT_OPACITY_SCALE = scaleLinear().domain([15, 40]).clamp(true); // available height in px
 const TRANSITION_DURATION = 800;
 
 export default Kapsule({
@@ -247,8 +248,11 @@ export default Kapsule({
         .style('text-anchor', state.orientation === 'lr' ? 'start' : state.orientation === 'rl' ? 'end' : 'middle')
         .text(d => nameOf(d.data))
         .transition(transition)
-          .style('opacity', d => LABELS_OPACITY_SCALE((horiz ? y1(d) - y0(d) : x1(d) - x0(d)) * zoomTr.k))
-          // Scale labels inversely proportional
+          .style('opacity', d => horiz
+            ? LABELS_HEIGHT_OPACITY_SCALE((y1(d) - y0(d)) * zoomTr.k)
+            : LABELS_WIDTH_OPACITY_SCALE((x1(d) - x0(d)) * zoomTr.k / nameOf(d.data).length)
+          )
+           // Scale labels inversely proportional
           .attrTween('transform', function () {
             const kTr = d3Interpolate(prevK, zoomTr.k);
             return horiz ? t => `scale(1, ${1 / kTr(t)})` : t => `scale(${1 / kTr(t)}, 1)`;
