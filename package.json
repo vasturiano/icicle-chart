@@ -4,6 +4,7 @@
   "description": "A partition / icicle interactive chart web component for visualizing hierarchical data",
   "license": "MIT",
   "unpkg": "dist/icicle-chart.min.js",
+  "jsdelivr": "dist/icicle-chart.min.js",
   "main": "dist/icicle-chart.common.js",
   "module": "dist/icicle-chart.module.js",
   "repository": {
