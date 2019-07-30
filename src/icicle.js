@@ -14,28 +14,23 @@ const TRANSITION_DURATION = 800;
 
 export default Kapsule({
   props: {
-    width: {
-      default: window.innerWidth,
-      onChange: function() { this.zoomReset(); this._parseData(); }
-    },
-    height: {
-      default: window.innerHeight,
-      onChange: function() { this.zoomReset(); this._parseData(); }
-    },
+    width: { default: window.innerWidth, onChange(_, state) { state.needsReparse = true }},
+    height: { default: window.innerHeight, onChange(_, state) { state.needsReparse = true }},
     orientation: {
       default: 'lr', // td, bu, lr, rl
-      onChange: function() { this.zoomReset(); this._parseData(); }
+      onChange: function(_, state) { this.zoomReset(); state.needsReparse = true; }
     },
     data: { onChange: function() { this._parseData(); } },
-    children: { default: 'children', onChange: function() { this._parseData(); }},
-    sort: { onChange: function() { this._parseData(); }},
+    children: { default: 'children', onChange(_, state) { state.needsReparse = true }},
+    sort: { onChange(_, state) { state.needsReparse = true }},
     label: { default: d => d.name },
     size: {
       default: 'value',
-      onChange: function() { this.zoomReset(); this._parseData(); }
+      onChange: function(_, state) { this.zoomReset(); state.needsReparse = true; }
     },
     color: { default: d => 'lightgrey' },
     minSegmentWidth: { default: .8 },
+    excludeRoot: { default: false, onChange(_, state) { state.needsReparse = true }},
     showLabels: { default: true },
     tooltipContent: { default: d => '', triggerUpdate: false },
     onClick: { triggerUpdate: false }
@@ -84,7 +79,19 @@ export default Kapsule({
           d.data.__dataNode = d; // Dual-link data nodes
         });
 
-        state.layoutData = hierData.descendants();
+        if (state.excludeRoot) {
+          // re-scale y values if excluding root
+          const yScale = scaleLinear()
+            .domain([hierData.y1 - hierData.y0, size[1]])
+            .range([0, size[1]]);
+
+          hierData.descendants().forEach(d => {
+            d.y0 = yScale(d.y0);
+            d.y1 = yScale(d.y1);
+          });
+        }
+
+        state.layoutData = hierData.descendants().filter(d => d.y0 >= 0);
       }
     }
   },
@@ -137,6 +144,11 @@ export default Kapsule({
       .on('click', () => (state.onClick || this.zoomReset)(null)); // By default reset zoom when clicking on canvas
   },
   update: function(state) {
+    if (state.needsReparse) {
+      this._parseData();
+      state.needsReparse = false;
+    }
+
     state.svg
       .style('width', state.width + 'px')
       .style('height', state.height + 'px');

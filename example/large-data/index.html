@@ -35,6 +35,7 @@
       .orientation('td')
       .data(genNode())
       .color(d => color(d.name))
+      .excludeRoot(true)
       .showLabels(false)
       .tooltipContent((d, node) => `Size: <i>${node.value}</i>`)
       (document.getElementById('chart'));
