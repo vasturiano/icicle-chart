@@ -209,7 +209,13 @@ export default Kapsule({
       .on('mouseover', d => {
         state.tooltip.style('display', 'inline');
         state.tooltip.html(`
-          <div class="tooltip-title">${getNodeStack(d).map(d => nameOf(d.data)).join(' &rarr; ')}</div>
+          <div class="tooltip-title">
+            ${getNodeStack(d)
+              .slice(state.excludeRoot ? 1 : 0)
+              .map(d => nameOf(d.data))
+              .join(' &rarr; ')
+            }
+          </div>
           ${state.tooltipContent(d.data, d)}
         `);
       })
