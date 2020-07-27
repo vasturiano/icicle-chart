@@ -24,6 +24,10 @@
   fill: #F7F7F7;
 }
 
+.icicle-viz {
+  position: relative;
+}
+
 .icicle-tooltip {
   display: none;
   position: absolute;
