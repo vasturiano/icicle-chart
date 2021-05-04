@@ -176,6 +176,7 @@ export default Kapsule({
 
     const nameOf = accessorFn(state.label);
     const colorOf = accessorFn(state.color);
+    const nodeClassNameOf = accessorFn(state.nodeClassName);
 
     const animate = !state.skipTransitionsOnce;
     state.skipTransitionsOnce = false;
@@ -191,7 +192,10 @@ export default Kapsule({
 
     // Entering
     const newCell = cell.enter().append('g')
-      .attr('class', 'node')
+      .attr('class', d => [
+        'node',
+        ...(`${nodeClassNameOf(d.data) || ''}`.split(' ').map(str => str.trim()))
+      ].filter(s => s).join(' '))
       .attr('transform', d => `translate(
         ${x0(d) + (x1(d) - x0(d)) * (horiz ? 0 : 0.5)},
         ${y0(d) + (y1(d) - y0(d)) * (horiz ? 0.5 : 0)}
