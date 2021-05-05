@@ -29,6 +29,7 @@ export default Kapsule({
       onChange: function(_, state) { this.zoomReset(); state.needsReparse = true; }
     },
     color: { default: d => 'lightgrey' },
+    nodeClassName: {}, // Additional css classes to add on each segment node
     minSegmentWidth: { default: .8 },
     excludeRoot: { default: false, onChange(_, state) { state.needsReparse = true }},
     showLabels: { default: true },
@@ -176,6 +177,7 @@ export default Kapsule({
 
     const nameOf = accessorFn(state.label);
     const colorOf = accessorFn(state.color);
+    const nodeClassNameOf = accessorFn(state.nodeClassName);
 
     const animate = !state.skipTransitionsOnce;
     state.skipTransitionsOnce = false;
@@ -191,7 +193,6 @@ export default Kapsule({
 
     // Entering
     const newCell = cell.enter().append('g')
-      .attr('class', 'node')
       .attr('transform', d => `translate(
         ${x0(d) + (x1(d) - x0(d)) * (horiz ? 0 : 0.5)},
         ${y0(d) + (y1(d) - y0(d)) * (horiz ? 0.5 : 0)}
@@ -243,6 +244,11 @@ export default Kapsule({
 
     // Entering + Updating
     const allCells = cell.merge(newCell);
+
+    allCells.attr('class', d => [
+      'node',
+      ...(`${nodeClassNameOf(d.data) || ''}`.split(' ').map(str => str.trim()))
+    ].filter(s => s).join(' '));
 
     allCells.transition(transition)
       .attr('transform', d => `translate(${x0(d)},${y0(d)})`);

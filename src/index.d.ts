@@ -50,6 +50,8 @@ export interface IcicleChartGenericInstance<ChainableInstance> {
   size(sizeAccessor: NodeAccessor<string>): ChainableInstance;
   color(): NodeAccessor<string>;
   color(colorAccessor: NodeAccessor<string>): ChainableInstance;
+  nodeClassName(): NodeAccessor<string>;
+  nodeClassName(nodeClassName: NodeAccessor<string>): NodeAccessor<string>;
 
   minSegmentWidth(): number;
   minSegmentWidth(width: number): ChainableInstance;
