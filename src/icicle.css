@@ -4,12 +4,12 @@
 
 .icicle-viz rect {
   cursor: pointer;
-  transition: opacity .4s;
+  transition: fill-opacity .4s;
 }
 
 .icicle-viz rect:hover {
-  opacity: 0.85;
-  transition: opacity .05s;
+  fill-opacity: 0.85;
+  transition: fill-opacity .05s;
 }
 
 .icicle-viz text {
