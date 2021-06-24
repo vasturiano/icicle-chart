@@ -76,6 +76,9 @@ export interface IcicleChartGenericInstance<ChainableInstance> {
   zoomToNode(node: Node): ChainableInstance;
   zoomBy(k: number):ChainableInstance;
   zoomReset():ChainableInstance;
+
+  transitionDuration(): number;
+  transitionDuration(duration: number): ChainableInstance;
 }
 
 export type IcicleChartInstance = IcicleChartGenericInstance<IcicleChartInstance>;
