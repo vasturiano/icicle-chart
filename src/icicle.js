@@ -10,7 +10,6 @@ import accessorFn from 'accessor-fn';
 
 const LABELS_WIDTH_OPACITY_SCALE = scaleLinear().domain([4, 8]).clamp(true); // px per char
 const LABELS_HEIGHT_OPACITY_SCALE = scaleLinear().domain([15, 40]).clamp(true); // available height in px
-const TRANSITION_DURATION = 800;
 
 export default Kapsule({
   props: {
@@ -37,15 +36,16 @@ export default Kapsule({
     tooltipTitle: { default: null, triggerUpdate: false },
     tooltipContent: { default: d => '', triggerUpdate: false },
     onClick: { triggerUpdate: false },
-    onHover: { triggerUpdate: false }
+    onHover: { triggerUpdate: false },
+    transitionDuration: { default: 800, triggerUpdate: false }
   },
   methods: {
     zoomBy: function(state, k) {
-      state.zoom.zoomBy(k, TRANSITION_DURATION);
+      state.zoom.zoomBy(k, state.transitionDuration);
       return this;
     },
     zoomReset: function(state) {
-      state.zoom.zoomReset(TRANSITION_DURATION);
+      state.zoom.zoomReset(state.transitionDuration);
       return this;
     },
     zoomToNode: function(state, d = {}) {
@@ -56,7 +56,7 @@ export default Kapsule({
         const scale = state[horiz ? 'height' : 'width'] / (node.x1 - node.x0);
         const tr = -node.x0;
 
-        state.zoom.zoomTo({ x: horiz ? 0 : tr, y: horiz ? tr : 0, k: scale }, TRANSITION_DURATION);
+        state.zoom.zoomTo({ x: horiz ? 0 : tr, y: horiz ? tr : 0, k: scale }, state.transitionDuration);
       }
       return this;
     },
@@ -181,7 +181,7 @@ export default Kapsule({
 
     const animate = !state.skipTransitionsOnce;
     state.skipTransitionsOnce = false;
-    const transition = d3Transition().duration(animate ? TRANSITION_DURATION: 0);
+    const transition = d3Transition().duration(animate ? state.transitionDuration: 0);
 
     const x0 = { td: d => d.x0, bu: d => d.x0, lr: d => d.y0, rl: d => state.width - d.y1 }[state.orientation];
     const x1 = { td: d => d.x1, bu: d => d.x1, lr: d => d.y1, rl: d => state.width - d.y0 }[state.orientation];
