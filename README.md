@@ -3,7 +3,7 @@ icicle-chart
 
 [![NPM package][npm-img]][npm-url]
 [![Build Size][build-size-img]][build-size-url]
-[![Dependencies][dependencies-img]][dependencies-url]
+[![NPM Downloads][npm-downloads-img]][npm-downloads-url]
 
 <p align="center">
    <a href="https://vasturiano.github.io/icicle-chart/example/flare"><img width="90%" src="https://vasturiano.github.io/icicle-chart/example/preview.png"></a>
@@ -23,23 +23,23 @@ See also the [Sunburst](https://github.com/vasturiano/sunburst-chart), [Circle P
 
 ## Quick start
 
-```
+```js
 import Icicle from 'icicle-chart';
 ```
 or
-```
+```js
 const Icicle = require('icicle-chart');
 ```
 or even
-```
+```html
 <script src="//unpkg.com/icicle-chart"></script>
 ```
 then
-```
-var myChart = Icicle();
+```js
+const myChart = Icicle();
 myChart
-    .data(<myData>)
-    (<myDOMElement>);
+  .data(<myData>)
+  (<myDOMElement>);
 ```
 
 ## API reference
@@ -71,7 +71,7 @@ myChart
 
 ## Data syntax
 
-```
+```js
 {
   name: "root",
   children: [
@@ -100,9 +100,9 @@ myChart
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=L398E7PKP47E8&currency_code=USD&source=url) If this project has helped you and you'd like to contribute back, you can always [buy me a ☕](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=L398E7PKP47E8&currency_code=USD&source=url)!
 
-[npm-img]: https://img.shields.io/npm/v/icicle-chart.svg
+[npm-img]: https://img.shields.io/npm/v/icicle-chart
 [npm-url]: https://npmjs.org/package/icicle-chart
-[build-size-img]: https://img.shields.io/bundlephobia/minzip/icicle-chart.svg
+[build-size-img]: https://img.shields.io/bundlephobia/minzip/icicle-chart
 [build-size-url]: https://bundlephobia.com/result?p=icicle-chart
-[dependencies-img]: https://img.shields.io/david/vasturiano/icicle-chart.svg
-[dependencies-url]: https://david-dm.org/vasturiano/icicle-chart
+[npm-downloads-img]: https://img.shields.io/npm/dt/icicle-chart
+[npm-downloads-url]: https://www.npmtrends.com/icicle-chart
