@@ -79,6 +79,9 @@ export interface IcicleChartGenericInstance<ChainableInstance> {
 
   transitionDuration(): number;
   transitionDuration(duration: number): ChainableInstance;
+
+  disableD3Transition(): boolean;
+  disableD3Transition(disable: boolean): ChainableInstance;
 }
 
 export type IcicleChartInstance = IcicleChartGenericInstance<IcicleChartInstance>;

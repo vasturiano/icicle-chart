@@ -37,7 +37,8 @@ export default Kapsule({
     tooltipContent: { default: d => '', triggerUpdate: false },
     onClick: { triggerUpdate: false },
     onHover: { triggerUpdate: false },
-    transitionDuration: { default: 800, triggerUpdate: false }
+    transitionDuration: { default: 800, triggerUpdate: false },
+    disableD3Transitions: { default: false }
   },
   methods: {
     zoomBy: function(state, k) {
@@ -181,7 +182,7 @@ export default Kapsule({
 
     const animate = !state.skipTransitionsOnce;
     state.skipTransitionsOnce = false;
-    const transition = d3Transition().duration(animate ? state.transitionDuration: 0);
+    const transition = state.disableD3Transitions ? null : d3Transition().duration(animate ? state.transitionDuration: 0);
 
     const x0 = { td: d => d.x0, bu: d => d.x0, lr: d => d.y0, rl: d => state.width - d.y1 }[state.orientation];
     const x1 = { td: d => d.x1, bu: d => d.x1, lr: d => d.y1, rl: d => state.width - d.y0 }[state.orientation];
