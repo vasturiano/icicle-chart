@@ -24,25 +24,17 @@
   fill: #F7F7F7;
 }
 
-.icicle-viz {
-  position: relative;
-}
-
-.icicle-tooltip {
-  display: none;
-  position: absolute;
+.icicle-viz .tooltip {
   max-width: 320px;
   white-space: nowrap;
-  padding: 5px;
-  border-radius: 3px;
-  font: 12px sans-serif;
-  color: #eee;
-  background: rgba(0,0,0,0.65);
-  pointer-events: none;
 }
 
-.icicle-tooltip .tooltip-title {
+.icicle-viz .tooltip-title {
   font-weight: bold;
   text-align: center;
   margin-bottom: 5px;
+}
+
+.icicle-viz {
+  position: relative;
 }
