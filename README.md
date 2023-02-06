@@ -26,11 +26,7 @@ See also the [Sunburst](https://github.com/vasturiano/sunburst-chart), [Circle P
 ```js
 import Icicle from 'icicle-chart';
 ```
-or
-```js
-const Icicle = require('icicle-chart');
-```
-or even
+or using a *script* tag
 ```html
 <script src="//unpkg.com/icicle-chart"></script>
 ```
