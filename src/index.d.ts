@@ -29,61 +29,57 @@ type TooltipFn = (node: Node, dataNode: DataNode) => string;
 
 export type Orientation = 'td' | 'bu' | 'lr' | 'rl';
 
-export interface IcicleChartGenericInstance<ChainableInstance> {
-  (element: HTMLElement): ChainableInstance;
+declare class IcicleChart {
+  constructor(element: HTMLElement, configOptions?: ConfigOptions);
 
   width(): number;
-  width(width: number): ChainableInstance;
+  width(width: number): IcicleChart;
   height(): number;
-  height(height: number): ChainableInstance;
+  height(height: number): IcicleChart;
 
   orientation(): Orientation;
-  orientation(orientation: Orientation): ChainableInstance;
+  orientation(orientation: Orientation): IcicleChart;
 
   data(): Node;
-  data(rootNode: Node): ChainableInstance;
+  data(rootNode: Node): IcicleChart;
   children(): NodeAccessor<Node[]>;
-  children(childrenAccessor: NodeAccessor<Node[]>): ChainableInstance;
+  children(childrenAccessor: NodeAccessor<Node[]>): IcicleChart;
   label(): NodeAccessor<string>;
-  label(textAccessor: NodeAccessor<string>): ChainableInstance;
+  label(textAccessor: NodeAccessor<string>): IcicleChart;
   size(): NodeAccessor<string>;
-  size(sizeAccessor: NodeAccessor<string>): ChainableInstance;
+  size(sizeAccessor: NodeAccessor<string>): IcicleChart;
   color(): NodeAccessor<string>;
-  color(colorAccessor: NodeAccessor<string>): ChainableInstance;
+  color(colorAccessor: NodeAccessor<string>): IcicleChart;
   nodeClassName(): NodeAccessor<string>;
-  nodeClassName(nodeClassName: NodeAccessor<string>): ChainableInstance;
+  nodeClassName(nodeClassName: NodeAccessor<string>): IcicleChart;
 
   minSegmentWidth(): number;
-  minSegmentWidth(width: number): ChainableInstance;
+  minSegmentWidth(width: number): IcicleChart;
   excludeRoot(): boolean;
-  excludeRoot(exclude: boolean): ChainableInstance;
+  excludeRoot(exclude: boolean): IcicleChart;
 
   sort(): CompareFn<Node> | null;
-  sort(cmpFn: CompareFn<Node> | null): ChainableInstance;
+  sort(cmpFn: CompareFn<Node> | null): IcicleChart;
 
   showLabels(): boolean;
-  showLabels(show: boolean): ChainableInstance;
+  showLabels(show: boolean): IcicleChart;
   showTooltip(): (node: Node) => boolean;
-  showTooltip(showTooltipFn: (node: Node) => boolean): ChainableInstance;
+  showTooltip(showTooltipFn: (node: Node) => boolean): IcicleChart;
   tooltipTitle(): TooltipFn;
-  tooltipTitle(fn: TooltipFn): ChainableInstance;
+  tooltipTitle(fn: TooltipFn): IcicleChart;
   tooltipContent(): TooltipFn;
-  tooltipContent(fn: TooltipFn): ChainableInstance;
+  tooltipContent(fn: TooltipFn): IcicleChart;
 
-  onClick(cb: ((node: Node, event: MouseEvent) => void) | null): ChainableInstance;
-  onRightClick(cb: ((node: Node, event: MouseEvent) => void) | null): ChainableInstance;
-  onHover(cb: ((node: Node | null, event: MouseEvent) => void) | null): ChainableInstance;
+  onClick(cb: ((node: Node, event: MouseEvent) => void) | null): IcicleChart;
+  onRightClick(cb: ((node: Node, event: MouseEvent) => void) | null): IcicleChart;
+  onHover(cb: ((node: Node | null, event: MouseEvent) => void) | null): IcicleChart;
 
-  zoomToNode(node: Node): ChainableInstance;
-  zoomBy(k: number):ChainableInstance;
-  zoomReset():ChainableInstance;
+  zoomToNode(node: Node): IcicleChart;
+  zoomBy(k: number):IcicleChart;
+  zoomReset():IcicleChart;
 
   transitionDuration(): number;
-  transitionDuration(duration: number): ChainableInstance;
+  transitionDuration(duration: number): IcicleChart;
 }
-
-export type IcicleChartInstance = IcicleChartGenericInstance<IcicleChartInstance>;
-
-declare function IcicleChart(configOptions?: ConfigOptions): IcicleChartInstance;
 
 export default IcicleChart;

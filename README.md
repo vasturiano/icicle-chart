@@ -32,10 +32,8 @@ or using a *script* tag
 ```
 then
 ```js
-const myChart = Icicle();
-myChart
-  .data(<myData>)
-  (<myDOMElement>);
+const myChart = new Icicle(<myDOMElement>)
+  .data(<myData>);
 ```
 
 ## API reference

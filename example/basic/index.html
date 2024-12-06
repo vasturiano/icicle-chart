@@ -38,11 +38,10 @@
       }]
     };
 
-    Icicle()
+    new Icicle(document.getElementById('chart'))
       .orientation('td')
       .data(data)
       .size('size')
-      .color('color')
-      (document.getElementById('chart'));
+      .color('color');
   </script>
 </body>

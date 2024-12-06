@@ -31,13 +31,12 @@
 
     const color = d3.scaleOrdinal(d3.schemePaired);
 
-    Icicle()
+    new Icicle(document.getElementById('chart'))
       .orientation('td')
       .data(genNode())
       .color(d => color(d.name))
       .excludeRoot(true)
       .showLabels(false)
-      .tooltipContent((d, node) => `Size: <i>${node.value}</i>`)
-      (document.getElementById('chart'));
+      .tooltipContent((d, node) => `Size: <i>${node.value}</i>`);
   </script>
 </body>
