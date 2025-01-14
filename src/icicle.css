@@ -24,11 +24,6 @@
   fill: #F7F7F7;
 }
 
-.icicle-viz .tooltip {
-  max-width: 320px;
-  white-space: nowrap;
-}
-
 .icicle-viz .tooltip-title {
   font-weight: bold;
   text-align: center;
