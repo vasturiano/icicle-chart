@@ -1,6 +1,6 @@
 {
   "name": "icicle-chart",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "description": "A partition / icicle interactive chart web component for visualizing hierarchical data",
   "license": "MIT",
   "type": "module",
