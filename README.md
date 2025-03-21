@@ -28,7 +28,7 @@ import Icicle from 'icicle-chart';
 ```
 or using a *script* tag
 ```html
-<script src="//unpkg.com/icicle-chart"></script>
+<script src="//cdn.jsdelivr.net/npm/icicle-chart"></script>
 ```
 then
 ```js
