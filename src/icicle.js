@@ -105,7 +105,7 @@ export default Kapsule({
     zoom: zoomable()
   }),
   init: function(domNode, state) {
-    const el = d3Select(domNode)
+    const el = state.wrapperEl = d3Select(domNode)
       .append('div').attr('class', 'icicle-viz');
 
     state.svg = el.append('svg');
@@ -180,6 +180,12 @@ export default Kapsule({
     const animate = !state.skipTransitionsOnce;
     state.skipTransitionsOnce = false;
     const transition = d3Transition().duration(animate ? state.transitionDuration: 0);
+
+    // Trigger a dummy browser relayout after transitions to prevent Firefox blurry svg issue
+    transition.on('end', () => setTimeout(() =>
+      state.wrapperEl.style('left', `${Math.random() * 1e-3}px`),
+      500
+    ));
 
     const x0 = { td: d => d.x0, bu: d => d.x0, lr: d => d.y0, rl: d => state.width - d.y1 }[state.orientation];
     const x1 = { td: d => d.x1, bu: d => d.x1, lr: d => d.y1, rl: d => state.width - d.y0 }[state.orientation];
